@@ -4,27 +4,27 @@
 struct ChromaticScale {
 
 	enum {
-		B_SHARP = 0,
-		C = 0,
-		C_SHARP = 1,
-		D_FLAT = 1,
-		D = 2,
-		D_SHARP = 3,
-		E_FLAT = 3,
-		E = 4,
-		F_FLAT = 4,
-		E_SHARP = 5,
-		F = 5,
-		F_SHARP = 6,
-		G_FLAT = 6,
-		G = 7,
-		G_SHARP = 8,
-		A_FLAT = 8,
-		A = 9,
-		A_SHARP = 10,
-		B_FLAT = 10,
-		B = 11,
-		C_FLAT = 11
+		B_SHARP = -5,
+		C = -5,
+		C_SHARP = -4,
+		D_FLAT = -4,
+		D = -3,
+		D_SHARP = -2,
+		E_FLAT = -2,
+		E = -1,
+		F_FLAT = -1,
+		E_SHARP = 0,
+		F = 0,
+		F_SHARP = 1,
+		G_FLAT = 1,
+		G = 2,
+		G_SHARP = 3,
+		A_FLAT = 3,
+		A = 4,
+		A_SHARP = 5,
+		B_FLAT = 5,
+		B = 6,
+		C_FLAT = 6
 	};
 
 };

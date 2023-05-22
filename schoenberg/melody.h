@@ -8,15 +8,14 @@ class Melody
 public:
 	explicit Melody(const size_t number_of_notes);
 	std::vector<int> generate();
-	std::vector<int> getMelody() const;
+	[[nodiscard]] std::vector<int> getMelody() const;
+	
 private:
 	const TwelveToneRow row;
 	std::vector<int> melody_contour;
+	int last_index;
 	
 };
-
-
-
 
 #endif // !MELODY_H
 

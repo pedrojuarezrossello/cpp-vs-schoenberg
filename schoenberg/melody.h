@@ -1,20 +1,21 @@
 #ifndef MELODY_H
 #define MELODY_H
 #include "tone-row.h"
+#include "measure.h"
 #include <vector>
 
 class Melody 
 {
 public:
-	explicit Melody(const size_t number_of_notes);
-	std::vector<int> generate();
-	[[nodiscard]] std::vector<int> getMelody() const;
-	
+	explicit Melody(const int number_of_bars, Measure measure);
+	std::vector<std::pair<int, int>> generate();
+
 private:
-	const TwelveToneRow row;
-	std::vector<int> melody_contour;
-	int last_index;
-	
+	TwelveToneRow row;
+	Measure measure;
+	const int number_of_bars;
+	std::vector<int> createRhythm(Measure measure);
+	std::vector<int> rhythmHelper(int beats, int count, double p);
 };
 
 #endif // !MELODY_H

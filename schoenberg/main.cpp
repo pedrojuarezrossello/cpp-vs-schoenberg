@@ -1,42 +1,19 @@
 #include <iostream>
 #include "chromatic-scale.h"
+#include "melody.h"
 #include "tone-row.h"
 #include "utils.h"
 
 int main() {
 
-	/*TwelveToneRow testRow;
-	const auto row = testRow.getRow();
+	Measure measure(2, 4);
+	Melody melody(4, measure);
 
-	for (const int i : row)
+	auto melody_four_bars = melody.generate();
+
+	for (auto a : melody_four_bars)
 	{
-		std::cout << i << " ";
-	}
-
-	std::cout << '\n';
-
-	const auto rowSeg = testRow.randomFragment(4,10);
-	for (const int i : rowSeg)
-	{
-		std::cout << i << " ";
-	}
-
-	std::cout << '\n';
-
-	const auto rowInverted = testRow.inversion(4, 10,2);
-	for (int i : rowInverted)
-	{
-		std::cout << i << " ";
-	}
-
-	std::cout << '\n';*/
-	auto part = beatPartition(8);
-	for (auto a : part)
-	{
-		
-			std::cout << a << " ";
-		
-		std::cout << '\n';
+		std::cout << '(' << a.first << "," << a.second << ')' << " ";
 	}
 
 	return 0;

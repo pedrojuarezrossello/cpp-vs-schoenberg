@@ -44,12 +44,20 @@ std::vector<std::vector<int>> _partition(int num) {
 	return output;
 }
 
-std::vector<int> beatPartition(int num)
+std::vector<int> randomPartition(int num)
 {
 	const long long seed = std::chrono::system_clock::now().time_since_epoch().count();
 	std::default_random_engine generator(seed);
 	std::vector<std::vector<int>> partitions = _partition(num);
-	std::uniform_int_distribution<int> randomPartitionDistribution(0, partitions.size());
-	return partitions[randomPartitionDistribution(generator)];
+	std::uniform_int_distribution<int> randomPartitionDistribution(0, partitions.size()-1);
+	return partitions[randomPartitionDistribution(generator)]; //return a copy????
+}
+
+void rescale(std::vector<int>& vec, int scalar)
+{
+	for (int& element : vec)
+	{
+		element *= scalar;
+	}
 }
 

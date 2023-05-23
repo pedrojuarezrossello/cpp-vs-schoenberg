@@ -19,15 +19,15 @@ class TwelveToneRow
 public:
 	TwelveToneRow();
 	Row getRow() const;
-	melodyFragment inversion(size_t first, int length, int degree);
-	melodyFragment retrograde(size_t first, int length, int degree);
-	melodyFragment retrogradeInversion(size_t first, int length, int degree);
 	melodyFragment randomFragment(size_t first, int length);
 
 private:
 	Row row;
 	std::deque<Transformation> transformations;
 	melodyFragment getRowSegment(size_t first, int length);
+	melodyFragment inversion(size_t first, int length, int degree);
+	melodyFragment retrograde(size_t first, int length, int degree);
+	melodyFragment retrogradeInversion(size_t first, int length, int degree);
 	static void _transposition(melodyFragment& rowSegment, int degree);
 	static void _inversion(melodyFragment& rowSegment); 
 	static void _retrograde(melodyFragment& rowSegment);

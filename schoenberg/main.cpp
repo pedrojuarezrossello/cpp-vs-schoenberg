@@ -18,9 +18,10 @@
 
 int main() {
 
-    Measure timeSignature(3, 4);
-	Melody melody(6, timeSignature);
-   /* auto vec = melody.generate();
+    Measure timeSignature(4, 4);
+	Melody melody(12, timeSignature);
+
+    /*auto vec = melody.generate();
 
     for (auto a : vec)
     {

@@ -27,35 +27,43 @@ mx::api::ScoreData ScoreXML::convertToXML()
     auto& part = score.parts.back();
     auto bar = addFirstMeasure(part,timeSignature);
     int semiQuaverCountPerBeat{ 0 };
+    std::vector<bool> alt(7, false);
+
 
     for (auto pair : melody_array)
     {
-        bool isStartBeam{ false };
-        bool isContinuingBeam{ false };
-        bool isEndBeam{ false };
+
+        bool no_alteration{ false };
+
+        if ((!isAltered(pair.first) && !alterationValueFromPitch(alt,pair.first)) || (isAltered(pair.first) && alterationValueFromPitch(alt,pair.first)))
+        {
+            no_alteration = true;
+        }
+
+        adjustAlterationTable(alt, pair.first);
 
         if (pair.second >= 4)
         {
-            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount,false,false,false);
+            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount,false,false,false,no_alteration);
             semiQuaverCountPerBeat = pair.second % semiQuaversPerBeat;
         }
         else if (semiQuaverCountPerBeat == 0)
         {
-            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount,true,false,false);
+            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount,true,false,false,no_alteration);
             semiQuaverCountPerBeat += pair.second;
         } 
         else if (semiQuaverCountPerBeat > 0 && pair.second + semiQuaverCountPerBeat < semiQuaversPerBeat)
         {
-            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount,false,true,false);
+            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount,false,true,false,no_alteration);
             semiQuaverCountPerBeat += pair.second;
         }
         else if (semiQuaverCountPerBeat > 0 && pair.second + semiQuaverCountPerBeat == semiQuaversPerBeat)
         {
-            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount,false,false,true);
+            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount,false,false,true,no_alteration);
             semiQuaverCountPerBeat = 0;
         } else if (semiQuaverCountPerBeat > 0 && pair.second + semiQuaverCountPerBeat > semiQuaversPerBeat)
         {
-            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount, false, false, false);
+            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount, false, false, false,no_alteration);
             semiQuaverCountPerBeat = (semiQuaverCountPerBeat + pair.second) % semiQuaversPerBeat;
         }
 
@@ -64,6 +72,7 @@ mx::api::ScoreData ScoreXML::convertToXML()
         {
             bar = addMeasure(part);
             semiQuaverCount = 0;
+            alt = { false,false,false,false,false,false,false };
         }
     }
 

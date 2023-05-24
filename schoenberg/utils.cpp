@@ -103,7 +103,7 @@ void rescale(std::vector<int>& vec, int scalar)
 	}
 }
 
-mx::api::NoteData createNote(int pitch, int duration, int tickCount)
+mx::api::NoteData createNote(int pitch, int duration, int tickCount, bool start, bool middle, bool end)
 {
 	auto note = mx::api::NoteData{};
 	auto noteInfo = chromaticScale.find(pitch)->second;
@@ -128,15 +128,28 @@ mx::api::NoteData createNote(int pitch, int duration, int tickCount)
 	note.durationData.durationDots = durationInfo.second;
 	note.tickTimePosition = tickCount;
 
+	if (start)
+	{
+		note.beams.push_back(mx::api::Beam::begin);
+	}
+	if (middle)
+	{
+		note.beams.push_back(mx::api::Beam::extend);
+	}
+	if (end)
+	{
+		note.beams.push_back(mx::api::Beam::end);
+	}
+
 	return note;
 }
 
- void addNoteToMeasure( mx::api::MeasureData* measureP, int pitch, int duration, int tickCount)
+ void addNoteToMeasure( mx::api::MeasureData* measureP, int pitch, int duration, int tickCount, bool start, bool middle, bool end)
 {
     using namespace mx::api;
     auto staffP = &measureP->staves.at(0);
     int voice = 0;
-    staffP->voices[voice].notes.emplace_back(createNote(pitch,duration, tickCount));
+    staffP->voices[voice].notes.emplace_back(createNote(pitch,duration, tickCount, start, middle, end));
 }
 
  mx::api::MeasureData* addMeasure(mx::api::PartData& part)

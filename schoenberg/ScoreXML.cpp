@@ -23,14 +23,41 @@ mx::api::ScoreData ScoreXML::convertToXML()
 {
     int semiQuaverCount{ 0 };
     const int semiQuaversPerBar = (timeSignature.getDenominator() == 4) ? (timeSignature.getNumerator() * 4) : (timeSignature.getNumerator() * 2);
-
+    const int semiQuaversPerBeat = (timeSignature.getDenominator() == 4) ? 4 : 6;
     auto& part = score.parts.back();
-
     auto bar = addFirstMeasure(part,timeSignature);
+    int semiQuaverCountPerBeat{ 0 };
 
     for (auto pair : melody_array)
     {
-        addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount);
+        bool isStartBeam{ false };
+        bool isContinuingBeam{ false };
+        bool isEndBeam{ false };
+
+        if (pair.second >= 4)
+        {
+            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount,false,false,false);
+            semiQuaverCountPerBeat = pair.second % semiQuaversPerBeat;
+        }
+        else if (semiQuaverCountPerBeat == 0)
+        {
+            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount,true,false,false);
+            semiQuaverCountPerBeat += pair.second;
+        } 
+        else if (semiQuaverCountPerBeat > 0 && pair.second + semiQuaverCountPerBeat < semiQuaversPerBeat)
+        {
+            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount,false,true,false);
+            semiQuaverCountPerBeat += pair.second;
+        }
+        else if (semiQuaverCountPerBeat > 0 && pair.second + semiQuaverCountPerBeat == semiQuaversPerBeat)
+        {
+            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount,false,false,true);
+            semiQuaverCountPerBeat = 0;
+        } else if (semiQuaverCountPerBeat > 0 && pair.second + semiQuaverCountPerBeat > semiQuaversPerBeat)
+        {
+            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount, false, false, false);
+            semiQuaverCountPerBeat = (semiQuaverCountPerBeat + pair.second) % semiQuaversPerBeat;
+        }
 
         semiQuaverCount += pair.second;
         if (semiQuaverCount == semiQuaversPerBar)

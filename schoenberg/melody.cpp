@@ -54,10 +54,10 @@ std::vector<int> Melody::rhythmHelper(int beats, int count, double p)
 	std::default_random_engine generator(seed);
 	std::bernoulli_distribution distribution(p);
 	
-
+	//|| (temp.size()==1 && temp[0]!=1)
 	std::vector<int> temp = randomPartition(beats);
 	std::vector<int> output;
-	if (count == 0 || distribution(generator) || (temp.size()==1 && temp[0]!=1))
+	if (count == 0 || distribution(generator) )
 	{
 		rescale(temp, static_cast<int>(pow(2.0,static_cast<double>(count))));
 		return temp;

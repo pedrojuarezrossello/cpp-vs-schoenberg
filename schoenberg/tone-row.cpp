@@ -81,7 +81,7 @@ std::vector<int> TwelveToneRow::retrogradeInversion(size_t first, int length, in
 	return rowSegment;
 }
 
-std::vector<int> TwelveToneRow::randomFragment(size_t first, int length)
+std::vector<int> TwelveToneRow::randomFragment(size_t first, int length) 
 {
 	const long long seed = std::chrono::system_clock::now().time_since_epoch().count();
 	std::default_random_engine generator(seed);

@@ -7,7 +7,7 @@
 
 Melody::Melody(const int number, Measure measure) : row(TwelveToneRow()), measure(measure), number_of_bars(number) {}
 
-std::vector<std::pair<int,int>> Melody::generate()
+std::vector<std::pair<int,int>> Melody::generate() 
 {
 	std::vector<int> rhythmicSchema({});
 	for (int i = 0; i<number_of_bars; i++)
@@ -17,7 +17,7 @@ std::vector<std::pair<int,int>> Melody::generate()
 	}
 
 	std::vector<std::pair<int, int>> melody_contour({});
-	int number_of_notes = rhythmicSchema.size();
+	const int number_of_notes = rhythmicSchema.size();
 	int remaining{ number_of_notes };
 	int last_index_pitch{ 0 };
 	int last_index_rhythm{ 0 };
@@ -43,7 +43,12 @@ std::vector<std::pair<int,int>> Melody::generate()
 	return melody_contour;
 }
 
-std::vector<int> Melody::rhythmHelper(int beats, int count, double p)
+Measure Melody::getMeasure() const
+{
+	return measure;
+}
+
+std::vector<int> Melody::rhythmHelper(int beats, int count, double p) 
 {
 	const long long seed = std::chrono::system_clock::now().time_since_epoch().count();
 	std::default_random_engine generator(seed);
@@ -52,7 +57,7 @@ std::vector<int> Melody::rhythmHelper(int beats, int count, double p)
 
 	std::vector<int> temp = randomPartition(beats);
 	std::vector<int> output;
-	if (count == 0 || distribution(generator))
+	if (count == 0 || distribution(generator) || (temp.size()==1 && temp[0]!=1))
 	{
 		rescale(temp, static_cast<int>(pow(2.0,static_cast<double>(count))));
 		return temp;
@@ -70,10 +75,10 @@ std::vector<int> Melody::createRhythm(Measure measure)
 {
 	const int numerator = measure.getNumerator();
 	const int denominator = measure.getDenominator();
-	if (denominator == 4)
+	if (denominator == 8)
 	{
-		return rhythmHelper(numerator, 1, 0.25);
+		return rhythmHelper(numerator, 1, 0.21);
 	}
-	return rhythmHelper(numerator, 2, 0.3);
+	return rhythmHelper(numerator, 2, 0.25);
 }
 

@@ -9,7 +9,7 @@ class Melody
 public:
 	explicit Melody(const int number_of_bars, Measure measure);
 	std::vector<std::pair<int, int>> generate();
-
+	Measure getMeasure() const;
 private:
 	TwelveToneRow row;
 	Measure measure;

@@ -45,7 +45,7 @@ mx::api::ScoreData ScoreXML::convertToXML()
         if (pair.second >= 4)
         {
             addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount,false,false,false,no_alteration);
-            semiQuaverCountPerBeat = pair.second % semiQuaversPerBeat;
+            semiQuaverCountPerBeat = (semiQuaverCountPerBeat + pair.second) % semiQuaversPerBeat;
         }
         else if (semiQuaverCountPerBeat == 0)
         {

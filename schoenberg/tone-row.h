@@ -28,9 +28,7 @@ private:
 	melodyFragment inversion(size_t first, int length, int degree);
 	melodyFragment retrograde(size_t first, int length, int degree);
 	melodyFragment retrogradeInversion(size_t first, int length, int degree);
-	static void _transposition(melodyFragment& rowSegment, int degree);
-	static void _inversion(melodyFragment& rowSegment); 
-	static void _retrograde(melodyFragment& rowSegment);
+	
 };
 
 #endif //TONE_ROW_H 

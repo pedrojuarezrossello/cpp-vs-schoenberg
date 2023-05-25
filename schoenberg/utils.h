@@ -5,6 +5,14 @@
 #include <mx/api/MeasureData.h>
 #include <mx/api/PartData.h>
 
+using std::vector;
+
+//Helper functions to perform row transformations
+void transpositionHelper(vector<int>& rowSegment, int degree);
+void inversionHelper(vector<int>& rowSegment);
+void retrogradeHelper(vector<int>& rowSegment);
+
+
 int randomLength();
 std::vector<std::vector<int>> calculatePartition(int num);
 std::vector<int> randomPartition(int num);

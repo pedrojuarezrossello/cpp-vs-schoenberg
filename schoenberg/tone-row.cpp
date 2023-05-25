@@ -1,4 +1,5 @@
 #include "tone-row.h"
+#include "utils.h"
 #include <chrono>
 #include <random>
 
@@ -28,36 +29,11 @@ std::vector<int> TwelveToneRow::getRowSegment(size_t first, int length)
 
 }
 
-void TwelveToneRow::_transposition(std::vector<int>& rowSegment, int degree)
-{
-	if (degree > 5 || degree < -6) [[unlikely]]
-	{
-		throw std::invalid_argument("Degree must be between -6 and 5!");
-	}
-	for (int& element : rowSegment)
-		{
-			element = (element + degree) % 12;
-		}
-}
-
-void TwelveToneRow::_inversion(std::vector<int>& rowSegment)
-{
-	for (int& element : rowSegment)
-	{
-		element = ((2 * rowSegment[0] - element) % 12);
-	}
-}
-
-void TwelveToneRow::_retrograde(std::vector<int>& rowSegment)
-{
-	std::ranges::reverse(rowSegment.begin(), rowSegment.end());
-}
-
 std::vector<int> TwelveToneRow::retrograde(size_t first, int length, int degree)
 {
 	auto rowSegment = getRowSegment(first, length);
-	_retrograde(rowSegment);
-	_transposition(rowSegment, degree);
+	retrogradeHelper(rowSegment);
+	transpositionHelper(rowSegment, degree);
 
 	return rowSegment;
 }
@@ -65,8 +41,8 @@ std::vector<int> TwelveToneRow::retrograde(size_t first, int length, int degree)
 std::vector<int> TwelveToneRow::inversion(size_t first, int length, int degree)
 {
 	auto rowSegment = getRowSegment(first, length);
-	_inversion(rowSegment);
-	_transposition(rowSegment, degree);
+	inversionHelper(rowSegment);
+	transpositionHelper(rowSegment, degree);
 
 	return rowSegment;
 }
@@ -74,9 +50,9 @@ std::vector<int> TwelveToneRow::inversion(size_t first, int length, int degree)
 std::vector<int> TwelveToneRow::retrogradeInversion(size_t first, int length, int degree)
 {
 	auto rowSegment = getRowSegment(first, length);
-	_inversion(rowSegment);
-	_retrograde(rowSegment);
-	_transposition(rowSegment, degree);
+	inversionHelper(rowSegment);
+	retrogradeHelper(rowSegment);
+	transpositionHelper(rowSegment, degree);
 
 	return rowSegment;
 }

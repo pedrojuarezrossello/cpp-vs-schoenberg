@@ -8,6 +8,38 @@
 #include <mx/api/MeasureData.h>
 #include <mx/api/PartData.h>
 
+void transpositionHelper(std::vector<int>& rowSegment, int degree)
+{
+	if (degree > 5 || degree < -6) [[unlikely]]
+	{
+		throw std::invalid_argument("Degree must be between -6 and 5!");
+	}
+		for (int& element : rowSegment)
+		{
+			element = (element + degree) % 12;
+		}
+}
+
+void inversionHelper(std::vector<int>& rowSegment)
+{
+	for (int& element : rowSegment)
+	{
+		element = ((2 * rowSegment[0] - element) % 12);
+	}
+}
+
+void retrogradeHelper(std::vector<int>& rowSegment)
+{
+	std::ranges::reverse(rowSegment.begin(), rowSegment.end());
+}
+
+
+
+
+
+
+
+
 std::unordered_map<int, std::tuple<mx::api::Step, int, int>> chromaticScale {
 	{-11, std::make_tuple<>(mx::api::Step::g,4,0)},
 	{-10, std::make_tuple<>(mx::api::Step::g,4,1)},

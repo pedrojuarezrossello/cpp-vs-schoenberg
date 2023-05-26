@@ -10,7 +10,7 @@ public:
 	mx::api::ScoreData convertToXML();
 private:
 	mx::api::ScoreData score;
-	Measure timeSignature;
+	TimeSignature timeSignature;
 	std::vector<std::pair<int, int>>  melody_array;
 
 };

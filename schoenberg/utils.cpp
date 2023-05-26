@@ -8,37 +8,12 @@
 #include <mx/api/MeasureData.h>
 #include <mx/api/PartData.h>
 
-void transpositionHelper(std::vector<int>& rowSegment, int degree)
+std::default_random_engine getRandomEngine()
 {
-	if (degree > 5 || degree < -6) [[unlikely]]
-	{
-		throw std::invalid_argument("Degree must be between -6 and 5!");
-	}
-		for (int& element : rowSegment)
-		{
-			element = (element + degree) % 12;
-		}
+	const long long seed = std::chrono::system_clock::now().time_since_epoch().count();
+	std::default_random_engine generator(seed);
+	return generator;
 }
-
-void inversionHelper(std::vector<int>& rowSegment)
-{
-	for (int& element : rowSegment)
-	{
-		element = ((2 * rowSegment[0] - element) % 12);
-	}
-}
-
-void retrogradeHelper(std::vector<int>& rowSegment)
-{
-	std::ranges::reverse(rowSegment.begin(), rowSegment.end());
-}
-
-
-
-
-
-
-
 
 std::unordered_map<int, std::tuple<mx::api::Step, int, int>> chromaticScale {
 	{-11, std::make_tuple<>(mx::api::Step::g,4,0)},
@@ -201,7 +176,7 @@ mx::api::NoteData createNote(int pitch, int duration, int tickCount, bool start,
 	return measureP;
 }
 
- mx::api::MeasureData* addFirstMeasure(mx::api::PartData& part, Measure timeSignature)
+ mx::api::MeasureData* addFirstMeasure(mx::api::PartData& part, TimeSignature timeSignature)
 {
     using namespace mx::api;
     part.measures.emplace_back(MeasureData{});

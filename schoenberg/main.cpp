@@ -18,8 +18,10 @@
 
 int main() {
 
-    Measure timeSignature(4, 4);
-	Melody melody(12, timeSignature);
+    TimeSignature<4, 4> timeSignature;
+    std::cout << timeSignature.getDenominator();
+
+	//Melody melody(12, timeSignature);
 
     /*auto vec = melody.generate();
 
@@ -28,7 +30,7 @@ int main() {
         std::cout << '(' << a.first << ',' << a.second << ')' << " ";
     }*/
 
-  ScoreXML scoreXml(melody, "Test", "Violin");
+  /* ScoreXML scoreXml(melody, "Test", "Violin");
 
    auto score = scoreXml.convertToXML();
     
@@ -48,7 +50,7 @@ int main() {
 
     // we need to explicitly delete the object held by the manager
     mgr.destroyDocument(documentID);
-    
+    */
 
 	return 0;
 }

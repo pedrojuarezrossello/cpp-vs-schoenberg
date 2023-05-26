@@ -4,6 +4,10 @@
 #include <deque>
 #include <vector>
 
+using std::array;
+using std::vector;
+using std::deque;
+
 enum class Transformation
 {
 	INVERSION,
@@ -13,8 +17,8 @@ enum class Transformation
 
 class TwelveToneRow
 {
-	using melodyFragment = std::vector<int>;
-	using Row = std::array<int, 12>;
+	using melodyFragment = vector<int>;
+	using Row = array<int, 12>;
 
 public:
 	TwelveToneRow();
@@ -23,11 +27,12 @@ public:
 
 private:
 	Row row;
-	std::deque<Transformation> transformations;
-	melodyFragment getRowSegment(size_t first, int length);
-	melodyFragment inversion(size_t first, int length, int degree);
-	melodyFragment retrograde(size_t first, int length, int degree);
-	melodyFragment retrogradeInversion(size_t first, int length, int degree);
+	deque<Transformation> transformations; //stores the transformations according to the order they've been used
+	melodyFragment getRowSegment(size_t first, int length) const;
+	Transformation updateTransformationQueue();
+	melodyFragment inversion(size_t first, int length, int degree) const;
+	melodyFragment retrograde(size_t first, int length, int degree) const;
+	melodyFragment retrogradeInversion(size_t first, int length, int degree) const;
 	
 };
 

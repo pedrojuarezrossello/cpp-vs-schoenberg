@@ -5,7 +5,7 @@
 
 #include "utils.h"
 
-Melody::Melody(const int number, Measure measure) : row(TwelveToneRow()), measure(measure), number_of_bars(number) {}
+Melody::Melody(const int number, TimeSignature measure) : row(TwelveToneRow()), measure(measure), number_of_bars(number) {}
 
 std::vector<std::pair<int,int>> Melody::generate() 
 {
@@ -43,7 +43,7 @@ std::vector<std::pair<int,int>> Melody::generate()
 	return melody_contour;
 }
 
-Measure Melody::getMeasure() const
+TimeSignature Melody::getMeasure() const
 {
 	return measure;
 }
@@ -71,7 +71,7 @@ std::vector<int> Melody::rhythmHelper(int beats, int count, double p)
 	return output;
 }
 
-std::vector<int> Melody::createRhythm(Measure measure)
+std::vector<int> Melody::createRhythm(TimeSignature measure)
 {
 	const int numerator = measure.getNumerator();
 	const int denominator = measure.getDenominator();

@@ -1,84 +1,51 @@
 #include "melody.h"
-
+#include "include/melody_utils.h"
 #include <chrono>
 #include <random>
 
 #include "utils.h"
 
-Melody::Melody(const int number, TimeSignature measure) : row(TwelveToneRow()), measure(measure), number_of_bars(number) {}
+using std::pair;
+using std::make_pair;
 
-std::vector<std::pair<int,int>> Melody::generate() 
+template<int Numerator,int Denominator>
+vector<pair<int,int>> Melody<Numerator,Denominator>::generate() 
 {
-	std::vector<int> rhythmicSchema({});
-	for (int i = 0; i<number_of_bars; i++)
+	vector<int> rhythmicSchema;
+
+	for (int i = 0; i<number_of_bars; i++) //creates a rhythm of number_of_bars bars
 	{
-		std::vector<int> barUnit = createRhythm(measure);
+		vector<int> barUnit = createRhythm(time_signature.getNumerator(),time_signature.getDenominator());
 		rhythmicSchema.insert(rhythmicSchema.end(), barUnit.begin(), barUnit.end());
 	}
 
-	std::vector<std::pair<int, int>> melody_contour({});
-	const int number_of_notes = rhythmicSchema.size();
+	vector<pair<int, int>> melody_contour;
+
+	const int number_of_notes = rhythmicSchema.size(); 
 	int remaining{ number_of_notes };
-	int last_index_pitch{ 0 };
-	int last_index_rhythm{ 0 };
+	int last_row_index{ 0 };
+	int last_rhythm_index{ 0 };
 
 	while (remaining > 0)
 	{
 		int length = randomLength();
-		if (remaining < length)
+
+		if (remaining < length) //if we are the end and we get a length that's larger than the remaining notes
 		{
 			length = remaining;
 		}
 
-		std::vector<int> row_fragment = row.randomFragment(last_index_pitch,length);
+		vector<int> row_fragment = row.randomFragment(last_row_index,length); //get a random fragment from the row (from last processed index)
 		for (int i = 0; i<row_fragment.size(); i++)
 		{
-			melody_contour.emplace_back(std::make_pair(row_fragment[i], rhythmicSchema[last_index_rhythm + i]));
+			melody_contour.emplace_back(make_pair(row_fragment[i], rhythmicSchema[last_rhythm_index + i]));
 		}
-		last_index_pitch = (last_index_pitch + length) % 12;
-		last_index_rhythm += length;
+		//update values 
+		last_row_index = (last_row_index + length) % 12; //go round the row
+		last_rhythm_index += length;
 		remaining -= length;
 	}
 
 	return melody_contour;
-}
-
-TimeSignature Melody::getMeasure() const
-{
-	return measure;
-}
-
-std::vector<int> Melody::rhythmHelper(int beats, int count, double p) 
-{
-	const long long seed = std::chrono::system_clock::now().time_since_epoch().count();
-	std::default_random_engine generator(seed);
-	std::bernoulli_distribution distribution(p);
-	
-	//|| (temp.size()==1 && temp[0]!=1)
-	std::vector<int> temp = randomPartition(beats);
-	std::vector<int> output;
-	if (count == 0 || distribution(generator) )
-	{
-		rescale(temp, static_cast<int>(pow(2.0,static_cast<double>(count))));
-		return temp;
-	}
-
-	for (int element : temp)
-	{
-		std::vector<int> temp2 = rhythmHelper(2*element, count - 1, p + 0.1);
-		output.insert(output.end(), temp2.begin(), temp2.end());
-	}
-	return output;
-}
-
-std::vector<int> Melody::createRhythm(TimeSignature measure)
-{
-	const int numerator = measure.getNumerator();
-	const int denominator = measure.getDenominator();
-	if (denominator == 8)
-	{
-		return rhythmHelper(numerator, 1, 0.21);
-	}
-	return rhythmHelper(numerator, 2, 0.25);
 }
 

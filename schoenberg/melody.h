@@ -4,19 +4,22 @@
 #include "time_signature.h"
 #include <vector>
 
+template<int Numerator, int Denominator>
 class Melody 
 {
 public:
-	explicit Melody(const int number_of_bars, TimeSignature<int,int> measure);
+	explicit Melody(const int number_of_bars, TimeSignature<Numerator,Denominator> time_signature) :
+								row(TwelveToneRow()),time_signature(time_signature), number_of_bars(number_of_bars) {}
+
 	std::vector<std::pair<int, int>> generate();
-	TimeSignature getMeasure() const;
+	TimeSignature<Numerator, Denominator> getMeasure() const { return time_signature;};
 private:
 	TwelveToneRow row;
-	TimeSignature measure;
+	TimeSignature<Numerator, Denominator> time_signature;
 	const int number_of_bars;
-	std::vector<int> createRhythm(TimeSignature measure);
-	std::vector<int> rhythmHelper(int beats, int count, double p);
+
 };
 
+#include "melody.cpp"
 #endif // !MELODY_H
 

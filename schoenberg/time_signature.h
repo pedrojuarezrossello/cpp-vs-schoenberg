@@ -1,6 +1,5 @@
 #ifndef MEASURE_H
 #define MEASURE_H
-#include <stdexcept>
 
 template<int Numerator, int Denominator,
 	typename = typename std::enable_if<(Denominator == 4) || (Denominator == 8)>::type>

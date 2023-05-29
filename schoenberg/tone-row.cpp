@@ -1,6 +1,6 @@
 #include "tone-row.h"
 #include "include/tone_row_utils.h"
-#include "utils.h"
+#include "include/utils.h"
 #include <chrono>
 #include <random>
 

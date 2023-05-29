@@ -1,18 +1,7 @@
 #include <iostream>
-#include "melody.h"
 #include "ScoreXML.h"
-#include "utils.h"
 #include "mx/api/DocumentManager.h"
 #include "mx/api/ScoreData.h"
-#include "mx/api/PartData.h"
-#include "mx/api/MeasureData.h"
-#include "mx/api/StaffData.h"
-#include "mx/api/ClefData.h"
-#include "mx/api/VoiceData.h"
-#include "mx/api/NoteData.h"
-#include "mx/api/DurationData.h"
-#include "mx/api/PitchData.h"
-
 
 #define MX_WRITE_THIS_TO_THE_CONSOLE 1
 
@@ -30,8 +19,9 @@ int main() {
 
    ScoreXML<3,4> scoreXml("Test", "Violin", 4);
 
-   const auto score = scoreXml.convertToXML();
-    
+   scoreXml.convertToXML();
+   const auto score = scoreXml.getScore();
+
     // the document manager is the liaison between our score data and the MusicXML DOM.
     // it completely hides the MusicXML DOM from us when using mx::api
     auto& mgr = mx::api::DocumentManager::getInstance();

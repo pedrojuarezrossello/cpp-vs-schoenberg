@@ -17,7 +17,8 @@ class ScoreXML
 public:
 	ScoreXML( string&& title, string&& instrument, int number_of_bars);
 	ScoreXML(const string& title, const string& instrument, int number_of_bars);
-	ScoreData convertToXML();
+    ScoreData getScore() { return score; }
+	void convertToXML();
 private:
 	ScoreData score;
 	TimeSignature<Numerator,Denominator> time_signature;
@@ -65,7 +66,7 @@ ScoreXML<Numerator, Denominator>::ScoreXML(const string& title, const string& in
 }
 
 template<int Numerator, int Denominator>
-ScoreData ScoreXML<Numerator, Denominator>::convertToXML()
+void ScoreXML<Numerator, Denominator>::convertToXML()
 {
     int semiQuaverCount{ 0 };
     const int semiQuaversPerBar = (time_signature.getDenominator() == 4) ? (time_signature.getNumerator() * 4) : (time_signature.getNumerator() * 2);
@@ -75,45 +76,45 @@ ScoreData ScoreXML<Numerator, Denominator>::convertToXML()
     int semiQuaverCountPerBeat{ 0 };
     std::vector<bool> alt(7, false);
 
-    for (auto pair : melody_array)
+    for (const auto[pitch,duration] : melody_array)
     {
 
         bool no_alteration{ false };
 
-        if ((!isAltered(pair.first) && !alterationValueFromPitch(alt, pair.first)) || (isAltered(pair.first) && alterationValueFromPitch(alt, pair.first)))
+        if ((!isAltered(pitch) && !alterationValueFromPitch(alt, pitch)) || (isAltered(pitch) && alterationValueFromPitch(alt,pitch)))
         {
             no_alteration = true;
         }
 
-        adjustAlterationTable(alt, pair.first);
+        adjustAlterationTable(alt, pitch);
 
-        if (pair.second >= 4)
+        if (duration >= 4)
         {
-            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount, false, false, false, no_alteration);
-            semiQuaverCountPerBeat = (semiQuaverCountPerBeat + pair.second) % semiQuaversPerBeat;
+            addNoteToMeasure(bar, pitch, duration, semiQuaverCount, false, false, false, no_alteration);
+            semiQuaverCountPerBeat = (semiQuaverCountPerBeat + duration) % semiQuaversPerBeat;
         }
         else if (semiQuaverCountPerBeat == 0)
         {
-            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount, true, false, false, no_alteration);
-            semiQuaverCountPerBeat += pair.second;
+            addNoteToMeasure(bar, pitch, duration, semiQuaverCount, true, false, false, no_alteration);
+            semiQuaverCountPerBeat += duration;
         }
-        else if (semiQuaverCountPerBeat > 0 && pair.second + semiQuaverCountPerBeat < semiQuaversPerBeat)
+        else if (semiQuaverCountPerBeat > 0 && duration + semiQuaverCountPerBeat < semiQuaversPerBeat)
         {
-            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount, false, true, false, no_alteration);
-            semiQuaverCountPerBeat += pair.second;
+            addNoteToMeasure(bar, pitch, duration, semiQuaverCount, false, true, false, no_alteration);
+            semiQuaverCountPerBeat += duration;
         }
-        else if (semiQuaverCountPerBeat > 0 && pair.second + semiQuaverCountPerBeat == semiQuaversPerBeat)
+        else if (semiQuaverCountPerBeat > 0 && duration + semiQuaverCountPerBeat == semiQuaversPerBeat)
         {
-            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount, false, false, true, no_alteration);
+            addNoteToMeasure(bar, pitch, duration, semiQuaverCount, false, false, true, no_alteration);
             semiQuaverCountPerBeat = 0;
         }
-        else if (semiQuaverCountPerBeat > 0 && pair.second + semiQuaverCountPerBeat > semiQuaversPerBeat)
+        else if (semiQuaverCountPerBeat > 0 && duration + semiQuaverCountPerBeat > semiQuaversPerBeat)
         {
-            addNoteToMeasure(bar, pair.first, pair.second, semiQuaverCount, false, false, false, no_alteration);
-            semiQuaverCountPerBeat = (semiQuaverCountPerBeat + pair.second) % semiQuaversPerBeat;
+            addNoteToMeasure(bar, pitch, duration, semiQuaverCount, false, false, false, no_alteration);
+            semiQuaverCountPerBeat = (semiQuaverCountPerBeat + duration) % semiQuaversPerBeat;
         }
 
-        semiQuaverCount += pair.second;
+        semiQuaverCount += duration;
         if (semiQuaverCount == semiQuaversPerBar)
         {
             bar=addMeasure(part);
@@ -124,7 +125,6 @@ ScoreData ScoreXML<Numerator, Denominator>::convertToXML()
 
     part.measures.pop_back();
 
-    return score;
 }
 
 

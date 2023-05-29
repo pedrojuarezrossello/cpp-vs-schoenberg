@@ -9,10 +9,4 @@ void transpositionHelper(vector<int>& rowSegment, int degree);
 void inversionHelper(vector<int>& rowSegment);
 void retrogradeHelper(vector<int>& rowSegment);
 
-
-
-
-
-
-
 #endif // !TONE_ROW_UTILS_H

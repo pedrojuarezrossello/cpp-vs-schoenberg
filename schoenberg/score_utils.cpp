@@ -1,21 +1,18 @@
 #include "include/score_utils.h"
 #include "include/tables.h"
-#include "utils.h"
+#include "include/utils.h"
 #include <unordered_map>
 #include <unordered_set>
 
 using std::vector;
-using std::unique_ptr;
 using mx::api::NoteData;
 using mx::api::MeasureData;
 using mx::api::PartData;
-using mx::api::StaffData;
-using mx::api::ClefData;
 using mx::api::ClefSymbol;
 using  mx::api::Accidental;
 using mx::api::Beam;
 
-NoteData createNote(int pitch, int duration, int tickCount, bool start, bool middle, bool end, bool no_altered)
+NoteData createNote(const int pitch, const int duration, int tickCount, bool start, bool middle, bool end, bool no_altered)
 {
 	auto note = NoteData{}; //check if we can remake this with void
 	const auto noteInfo = chromaticScale.find(pitch)->second;
@@ -43,9 +40,9 @@ NoteData createNote(int pitch, int duration, int tickCount, bool start, bool mid
 		note.pitchData.accidental = Accidental::none;
 	}
 
-	const auto durationInfo = rhythmLookUpTable.find(duration)->second; //structed binding
-	note.durationData.durationName = durationInfo.first;
-	note.durationData.durationDots = durationInfo.second;
+	const auto [durationName, durationDots] = rhythmLookUpTable.find(duration)->second; 
+	note.durationData.durationName = durationName;
+	note.durationData.durationDots = durationDots;
 	note.tickTimePosition = tickCount;
 
 	if (start)
@@ -64,35 +61,36 @@ NoteData createNote(int pitch, int duration, int tickCount, bool start, bool mid
 	return note;
 }
 
-void addNoteToMeasure(MeasureData* measure, int pitch, int duration, int tickCount, bool start, bool middle, bool end, bool no_altered)
+void addNoteToMeasure(MeasureData* measure, const int pitch, const int duration, int tickCount, bool start, bool middle, bool end, bool no_altered)
 {
-	auto staff = &measure->staves.front(); //careful!!
-	staff->voices[0].notes.emplace_back(createNote(pitch, duration, tickCount, start, middle, end, no_altered)); //check this later
+	const auto staff = &measure->staves.front();
+	staff->voices[0].notes.emplace_back(createNote(pitch, duration, tickCount, start, middle, end, no_altered)); 
 }
 
 MeasureData* addMeasure(PartData& part)
 {
-	using namespace mx::api;
-	part.measures.emplace_back(MeasureData{});
+	part.measures.emplace_back(); //return a pointer allocated in stack??
 	auto measure = &part.measures.back();
-	measure->staves.emplace_back(StaffData{});
+
+	measure->staves.emplace_back();
 	return measure;
 }
+
 MeasureData* addFirstMeasure(PartData& part, int numerator, int denominator)
 {
 	part.measures.emplace_back(); //add a measure (first measure!) to the part
 
-	auto measure = &part.measures.back();
+	auto measure = &part.measures.back(); 
 
 	measure->timeSignature.beats = numerator;
 	measure->timeSignature.beatType = denominator;
 	measure->timeSignature.isImplicit = false;
 
 	measure->staves.emplace_back();
-	auto staff = &measure->staves.front();
+	const auto staff = &measure->staves.front();
 
 	staff->clefs.emplace_back();
-	auto clef = &staff->clefs.back();
+	const auto clef = &staff->clefs.back();
 
 	clef->symbol = ClefSymbol::g;
 	clef->line = 2;

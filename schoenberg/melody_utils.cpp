@@ -1,5 +1,5 @@
 #include "include/melody_utils.h"
-#include "utils.h"
+#include "include/utils.h"
 
 using std::bernoulli_distribution;
 using std::make_move_iterator;

@@ -2,7 +2,7 @@
 #define MELODY_H
 #include "tone-row.h"
 #include "time_signature.h"
-#include "utils.h"
+#include "include/utils.h"
 #include "include/melody_utils.h"
 #include <vector>
 

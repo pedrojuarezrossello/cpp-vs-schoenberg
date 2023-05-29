@@ -12,7 +12,7 @@ using mx::api::MeasureData;
 using mx::api::PartData;
 
 NoteData createNote(int pitch, int duration, int tickCount, bool start, bool middle, bool end, bool no_altered);
-void addNoteToMeasure(MeasureData* measureP, int pitch, int duration, int tickCount, bool start, bool middle, bool end, bool no_altered);
+void addNoteToMeasure(MeasureData* measure, int pitch, int duration, int tickCount, bool start, bool middle, bool end, bool no_altered);
 MeasureData* addMeasure(PartData& part);
 MeasureData* addFirstMeasure(PartData& part, int numerator, int denominator);
 void adjustAlterationTable(vector<bool>& alt, int pitch);

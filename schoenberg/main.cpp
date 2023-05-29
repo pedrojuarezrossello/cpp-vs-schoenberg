@@ -18,8 +18,6 @@
 
 int main() {
 
-    TimeSignature<4, 4> timeSignature;
-    std::cout << timeSignature.getDenominator();
 
 	//Melody melody(12, timeSignature);
 
@@ -30,9 +28,9 @@ int main() {
         std::cout << '(' << a.first << ',' << a.second << ')' << " ";
     }*/
 
-  /* ScoreXML scoreXml(melody, "Test", "Violin");
+   ScoreXML<3,4> scoreXml("Test", "Violin", 4);
 
-   auto score = scoreXml.convertToXML();
+   const auto score = scoreXml.convertToXML();
     
     // the document manager is the liaison between our score data and the MusicXML DOM.
     // it completely hides the MusicXML DOM from us when using mx::api
@@ -50,7 +48,7 @@ int main() {
 
     // we need to explicitly delete the object held by the manager
     mgr.destroyDocument(documentID);
-    */
+    
 
 	return 0;
 }

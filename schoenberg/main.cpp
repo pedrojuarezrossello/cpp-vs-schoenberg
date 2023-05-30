@@ -7,17 +7,7 @@
 
 int main() {
 
-
-	//Melody melody(12, timeSignature);
-
-    /*auto vec = melody.generate();
-
-    for (auto a : vec)
-    {
-        std::cout << '(' << a.first << ',' << a.second << ')' << " ";
-    }*/
-
-   ScoreXML<3,4> scoreXml("Test", "Violin", 4);
+   ScoreXML<3,4> scoreXml("Test", "Violin", 12);
 
    scoreXml.convertToXML();
    const auto score = scoreXml.getScore();

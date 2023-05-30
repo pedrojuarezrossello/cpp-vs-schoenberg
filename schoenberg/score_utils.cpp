@@ -11,8 +11,9 @@ using mx::api::PartData;
 using mx::api::ClefSymbol;
 using  mx::api::Accidental;
 using mx::api::Beam;
+using mx::api::CurveType;
 
-NoteData createNote(const int pitch, const int duration, int tickCount, bool start, bool middle, bool end, bool no_altered)
+NoteData createNote(const int pitch, const int duration, int tick_count, const BeamPosition beam_position, bool no_altered)
 {
 	auto note = NoteData{}; //check if we can remake this with void
 	const auto noteInfo = chromaticScale.find(pitch)->second;
@@ -43,33 +44,99 @@ NoteData createNote(const int pitch, const int duration, int tickCount, bool sta
 	const auto [durationName, durationDots] = rhythmLookUpTable.find(duration)->second; 
 	note.durationData.durationName = durationName;
 	note.durationData.durationDots = durationDots;
-	note.tickTimePosition = tickCount;
+	note.tickTimePosition = tick_count;
 
-	if (start)
+	switch (beam_position)
+
 	{
+	case BeamPosition::START:
 		note.beams.push_back(Beam::begin);
-	}
-	if (middle)
-	{
+		break;
+
+	case BeamPosition::MIDDLE:
 		note.beams.push_back(Beam::extend);
-	}
-	if (end)
-	{
+		break;
+
+	case BeamPosition::END:
 		note.beams.push_back(Beam::end);
+		break;
+
+	case BeamPosition::NO_BEAM:
+		break;
 	}
 
 	return note;
 }
 
-void addNoteToMeasure(MeasureData* measure, const int pitch, const int duration, int tickCount, bool start, bool middle, bool end, bool no_altered)
+NoteData createNotesWithTie(int pitch, int first_beat, int duration, int tick_count, int semiquaversPerBeat, bool no_altered, bool is_first)
+{
+	auto note = NoteData{};
+	const auto noteInfo = chromaticScale.find(pitch)->second;
+
+	note.pitchData.step = get<0>(noteInfo);
+	note.pitchData.octave = get<1>(noteInfo);
+	note.pitchData.alter = get<2>(noteInfo);
+
+	if (get<2>(noteInfo) == -1)
+	{
+		note.pitchData.accidental = Accidental::flat;
+
+	}
+	else if (get<2>(noteInfo))
+	{
+		note.pitchData.accidental = Accidental::sharp;
+	}
+	else
+	{
+		note.pitchData.accidental = Accidental::natural;
+	}
+
+	if (no_altered || !is_first)
+	{
+		note.pitchData.accidental = Accidental::none;
+	}
+
+	if (is_first) {
+	const auto [durationName, durationDots] = rhythmLookUpTable.find(first_beat)->second;
+	note.durationData.durationName = durationName;
+	note.durationData.durationDots = durationDots;
+	note.tickTimePosition = tick_count;
+	note.beams.push_back(Beam::end);
+	note.noteAttachmentData.curveStarts.emplace_back(CurveType::tie);
+
+	} else
+	{
+		const auto [durationName, durationDots] = rhythmLookUpTable.find(duration-first_beat)->second;
+		note.durationData.durationName = durationName;
+		note.durationData.durationDots = durationDots;
+		note.tickTimePosition = duration-first_beat;
+		note.noteAttachmentData.curveStops.emplace_back(CurveType::tie);
+	}
+
+	if (!is_first && duration-first_beat < semiquaversPerBeat)
+	{
+		note.beams.push_back(Beam::begin);
+	} 
+
+	return note;
+}
+
+void addNoteToMeasure(MeasureData* measure, const int pitch, const int duration, int tick_count, const BeamPosition beam_position, bool no_altered)
 {
 	const auto staff = &measure->staves.front();
-	staff->voices[0].notes.emplace_back(createNote(pitch, duration, tickCount, start, middle, end, no_altered)); 
+	staff->voices[0].notes.emplace_back(createNote(pitch, duration, tick_count, beam_position, no_altered)); //try this later
+}
+
+void addNoteWithTie(MeasureData* measure, int pitch, int first_beat, int duration, int tick_count, int semiquaversPerBeat, bool no_altered)
+{
+	const auto staff = &measure->staves.front();
+	staff->voices[0].notes.emplace_back(createNotesWithTie(pitch, first_beat, duration, tick_count, semiquaversPerBeat, no_altered, true));
+	staff->voices[0].notes.emplace_back(createNotesWithTie(pitch, first_beat, duration, tick_count, semiquaversPerBeat, no_altered, false));
 }
 
 MeasureData* addMeasure(PartData& part)
 {
-	part.measures.emplace_back(); //return a pointer allocated in stack??
+	part.measures.emplace_back(); 
 	auto measure = &part.measures.back();
 
 	measure->staves.emplace_back();
@@ -80,7 +147,7 @@ MeasureData* addFirstMeasure(PartData& part, int numerator, int denominator)
 {
 	part.measures.emplace_back(); //add a measure (first measure!) to the part
 
-	auto measure = &part.measures.back(); 
+	auto measure = &part.measures.back();
 
 	measure->timeSignature.beats = numerator;
 	measure->timeSignature.beatType = denominator;

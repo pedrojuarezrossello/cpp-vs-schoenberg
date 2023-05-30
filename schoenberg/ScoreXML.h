@@ -68,62 +68,70 @@ ScoreXML<Numerator, Denominator>::ScoreXML(const string& title, const string& in
 template<int Numerator, int Denominator>
 void ScoreXML<Numerator, Denominator>::convertToXML()
 {
+    //get part 
+    auto& part = score.parts.back();
+    //add first measure
+	auto bar = addFirstMeasure(part, time_signature.getNumerator(), time_signature.getDenominator());
+  
+    //intialise trackers and alteration array
     int semiQuaverCount{ 0 };
     const int semiQuaversPerBar = (time_signature.getDenominator() == 4) ? (time_signature.getNumerator() * 4) : (time_signature.getNumerator() * 2);
     const int semiQuaversPerBeat = (time_signature.getDenominator() == 4) ? 4 : 6;
-    auto& part = score.parts.back();
-	auto bar = addFirstMeasure(part, time_signature.getNumerator(), time_signature.getDenominator());
     int semiQuaverCountPerBeat{ 0 };
-    std::vector<bool> alt(7, false);
+    vector<bool> alterations(7, false);
 
     for (const auto[pitch,duration] : melody_array)
     {
-
+        //determine if we need to add an accidental to the note
         bool no_alteration{ false };
 
-        if ((!isAltered(pitch) && !alterationValueFromPitch(alt, pitch)) || (isAltered(pitch) && alterationValueFromPitch(alt,pitch)))
+        //either it hasn't been altered yet and it is a natural OR it's been altered and the next occurence is also altered (so no need for accidental)
+        if ((!isAltered(pitch) && !alterationValueFromPitch(alterations, pitch)) || (isAltered(pitch) && alterationValueFromPitch(alterations,pitch)))
         {
             no_alteration = true;
         }
 
-        adjustAlterationTable(alt, pitch);
+        //update table
+        adjustAlterationTable(alterations, pitch);
 
-        if (duration >= 4)
+        //place the beams
+        if (duration >= 4) //if it's a crotchet or longer then no beam
         {
-            addNoteToMeasure(bar, pitch, duration, semiQuaverCount, false, false, false, no_alteration);
+            addNoteToMeasure(bar, pitch, duration, semiQuaverCount, BeamPosition::NO_BEAM, no_alteration);
             semiQuaverCountPerBeat = (semiQuaverCountPerBeat + duration) % semiQuaversPerBeat;
         }
-        else if (semiQuaverCountPerBeat == 0)
+        else if (semiQuaverCountPerBeat == 0) //start of the beam
         {
-            addNoteToMeasure(bar, pitch, duration, semiQuaverCount, true, false, false, no_alteration);
+            addNoteToMeasure(bar, pitch, duration, semiQuaverCount, BeamPosition::START, no_alteration);
             semiQuaverCountPerBeat += duration;
         }
-        else if (semiQuaverCountPerBeat > 0 && duration + semiQuaverCountPerBeat < semiQuaversPerBeat)
+        else if (semiQuaverCountPerBeat > 0 && duration + semiQuaverCountPerBeat < semiQuaversPerBeat) /*a beam has started, and we haven't reached 
+																											the end of the beat*/
         {
-            addNoteToMeasure(bar, pitch, duration, semiQuaverCount, false, true, false, no_alteration);
+            addNoteToMeasure(bar, pitch, duration, semiQuaverCount, BeamPosition::MIDDLE, no_alteration); 
             semiQuaverCountPerBeat += duration;
         }
-        else if (semiQuaverCountPerBeat > 0 && duration + semiQuaverCountPerBeat == semiQuaversPerBeat)
+        else if (semiQuaverCountPerBeat > 0 && duration + semiQuaverCountPerBeat == semiQuaversPerBeat) //end of the beat and thus of beam
         {
-            addNoteToMeasure(bar, pitch, duration, semiQuaverCount, false, false, true, no_alteration);
+            addNoteToMeasure(bar, pitch, duration, semiQuaverCount, BeamPosition::END, no_alteration);
             semiQuaverCountPerBeat = 0;
         }
-        else if (semiQuaverCountPerBeat > 0 && duration + semiQuaverCountPerBeat > semiQuaversPerBeat)
+        else if (semiQuaverCountPerBeat > 0 && duration + semiQuaverCountPerBeat > semiQuaversPerBeat) //beat overflow
         {
-            addNoteToMeasure(bar, pitch, duration, semiQuaverCount, false, false, false, no_alteration);
+            addNoteWithTie(bar, pitch, semiQuaversPerBeat - semiQuaverCountPerBeat, duration, semiQuaverCount, semiQuaverCountPerBeat, no_alteration);
             semiQuaverCountPerBeat = (semiQuaverCountPerBeat + duration) % semiQuaversPerBeat;
         }
 
-        semiQuaverCount += duration;
-        if (semiQuaverCount == semiQuaversPerBar)
+        semiQuaverCount += duration; //update the semiquaver count per bar
+        if (semiQuaverCount == semiQuaversPerBar) //end of bar - update trackers
         {
-            bar=addMeasure(part);
+            bar = addMeasure(part);
             semiQuaverCount = 0;
-            alt = { false,false,false,false,false,false,false };
+            alterations = vector<bool>(7,false);
         }
     }
 
-    part.measures.pop_back();
+    part.measures.pop_back(); //remove last measure (added in last iteration)
 
 }
 

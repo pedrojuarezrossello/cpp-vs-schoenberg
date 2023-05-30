@@ -13,7 +13,7 @@ template<int Numerator, int Denominator>
 class Melody 
 {
 public:
-	explicit Melody(const int number_of_bars) :
+	explicit Melody(const size_t number_of_bars) :
 								row(TwelveToneRow()),time_signature(TimeSignature<Numerator,Denominator>()), number_of_bars(number_of_bars) {}
 
 	std::vector<std::pair<int, int>> generate();
@@ -21,7 +21,7 @@ public:
 private:
 	TwelveToneRow row;
 	TimeSignature<Numerator, Denominator> time_signature;
-	const int number_of_bars;
+	const size_t number_of_bars;
 
 };
 
@@ -38,7 +38,7 @@ vector<pair<int, int>> Melody<Numerator, Denominator>::generate()
 
 	vector<pair<int, int>> melody_contour;
 
-	const int number_of_notes = rhythmicSchema.size();
+	const int number_of_notes = rhythmicSchema.size(); 
 	int remaining{ number_of_notes };
 	int last_row_index{ 0 };
 	int last_rhythm_index{ 0 };
@@ -49,13 +49,13 @@ vector<pair<int, int>> Melody<Numerator, Denominator>::generate()
 
 		if (remaining < length) //if we are the end and we get a length that's larger than the remaining notes
 		{
-			length = remaining;
+			length = remaining; //ok as it'll be at most 12 so no overflow
 		}
 
 		vector<int> row_fragment = row.randomFragment(last_row_index, length); //get a random fragment from the row (from last processed index)
 		for (int i = 0; i < row_fragment.size(); i++)
 		{
-			melody_contour.emplace_back(make_pair(row_fragment[i], rhythmicSchema[last_rhythm_index + i]));
+			melody_contour.emplace_back(row_fragment[i], rhythmicSchema[last_rhythm_index + i]);
 		}
 		//update values 
 		last_row_index = (last_row_index + length) % 12; //go round the row

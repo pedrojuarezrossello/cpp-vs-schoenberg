@@ -19,9 +19,7 @@ enum class BeamPosition {
 };
 
 NoteData createNote(int pitch, int duration, int tick_count, BeamPosition beam_position, bool no_altered);
-NoteData createNotesWithTie(int pitch, int first_beat, int duration, int tick_count, int semiquaversPerBeat, bool no_altered);
 void addNoteToMeasure(MeasureData* measure, int pitch, int duration, int tick_count, BeamPosition beam_position, bool no_altered);
-void addNoteWithTie(MeasureData* measure, int pitch, int first_beat, int duration, int tick_count, int semiquaversPerBeat, bool no_altered);
 MeasureData* addMeasure(PartData& part);
 MeasureData* addFirstMeasure(PartData& part, int numerator, int denominator);
 void adjustAlterationTable(vector<bool>& alt, int pitch);

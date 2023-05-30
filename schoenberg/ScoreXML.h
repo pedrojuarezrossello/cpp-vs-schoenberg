@@ -118,7 +118,7 @@ void ScoreXML<Numerator, Denominator>::convertToXML()
         }
         else if (semiQuaverCountPerBeat > 0 && duration + semiQuaverCountPerBeat > semiQuaversPerBeat) //beat overflow
         {
-            addNoteWithTie(bar, pitch, semiQuaversPerBeat - semiQuaverCountPerBeat, duration, semiQuaverCount, semiQuaverCountPerBeat, no_alteration);
+            addNoteToMeasure(bar, pitch, duration, semiQuaverCount, BeamPosition::NO_BEAM, no_alteration);
             semiQuaverCountPerBeat = (semiQuaverCountPerBeat + duration) % semiQuaversPerBeat;
         }
 

@@ -68,70 +68,10 @@ NoteData createNote(const int pitch, const int duration, int tick_count, const B
 	return note;
 }
 
-NoteData createNotesWithTie(int pitch, int first_beat, int duration, int tick_count, int semiquaversPerBeat, bool no_altered, bool is_first)
-{
-	auto note = NoteData{};
-	const auto noteInfo = chromaticScale.find(pitch)->second;
-
-	note.pitchData.step = get<0>(noteInfo);
-	note.pitchData.octave = get<1>(noteInfo);
-	note.pitchData.alter = get<2>(noteInfo);
-
-	if (get<2>(noteInfo) == -1)
-	{
-		note.pitchData.accidental = Accidental::flat;
-
-	}
-	else if (get<2>(noteInfo))
-	{
-		note.pitchData.accidental = Accidental::sharp;
-	}
-	else
-	{
-		note.pitchData.accidental = Accidental::natural;
-	}
-
-	if (no_altered || !is_first)
-	{
-		note.pitchData.accidental = Accidental::none;
-	}
-
-	if (is_first) {
-	const auto [durationName, durationDots] = rhythmLookUpTable.find(first_beat)->second;
-	note.durationData.durationName = durationName;
-	note.durationData.durationDots = durationDots;
-	note.tickTimePosition = tick_count;
-	note.beams.push_back(Beam::end);
-	note.noteAttachmentData.curveStarts.emplace_back(CurveType::tie);
-
-	} else
-	{
-		const auto [durationName, durationDots] = rhythmLookUpTable.find(duration-first_beat)->second;
-		note.durationData.durationName = durationName;
-		note.durationData.durationDots = durationDots;
-		note.tickTimePosition = duration-first_beat;
-		note.noteAttachmentData.curveStops.emplace_back(CurveType::tie);
-	}
-
-	if (!is_first && duration-first_beat < semiquaversPerBeat)
-	{
-		note.beams.push_back(Beam::begin);
-	} 
-
-	return note;
-}
-
 void addNoteToMeasure(MeasureData* measure, const int pitch, const int duration, int tick_count, const BeamPosition beam_position, bool no_altered)
 {
 	const auto staff = &measure->staves.front();
 	staff->voices[0].notes.emplace_back(createNote(pitch, duration, tick_count, beam_position, no_altered)); //try this later
-}
-
-void addNoteWithTie(MeasureData* measure, int pitch, int first_beat, int duration, int tick_count, int semiquaversPerBeat, bool no_altered)
-{
-	const auto staff = &measure->staves.front();
-	staff->voices[0].notes.emplace_back(createNotesWithTie(pitch, first_beat, duration, tick_count, semiquaversPerBeat, no_altered, true));
-	staff->voices[0].notes.emplace_back(createNotesWithTie(pitch, first_beat, duration, tick_count, semiquaversPerBeat, no_altered, false));
 }
 
 MeasureData* addMeasure(PartData& part)

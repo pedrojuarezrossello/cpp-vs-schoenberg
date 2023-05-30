@@ -8,15 +8,17 @@
 
 using std::pair;
 using std::make_pair;
+using std::vector;
 
 template<int Numerator, int Denominator>
 class Melody 
 {
+	using melody_contour = vector<pair<int, int>>;
 public:
 	explicit Melody(const size_t number_of_bars) :
 								row(TwelveToneRow()),time_signature(TimeSignature<Numerator,Denominator>()), number_of_bars(number_of_bars) {}
 
-	std::vector<std::pair<int, int>> generate();
+	melody_contour generate();
 	TimeSignature<Numerator, Denominator> getMeasure() const { return time_signature;};
 private:
 	TwelveToneRow row;
@@ -65,7 +67,6 @@ vector<pair<int, int>> Melody<Numerator, Denominator>::generate()
 
 	return melody_contour;
 }
-
 
 #endif // !MELODY_H
 

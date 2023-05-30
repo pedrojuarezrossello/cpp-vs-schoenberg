@@ -17,11 +17,6 @@ transformations{ {Transformation::INVERSION, Transformation::RETROGRADE, Transfo
 	std::ranges::shuffle(transformations.begin(), transformations.end(), generator);
 }
 
-array<int,12> TwelveToneRow::getRow() const
-{
-	return row;
-}
-
 vector<int> TwelveToneRow::getRowSegment(const size_t first, const int length) const 
 {
 	const auto it_to_row = row.cbegin();
@@ -69,7 +64,7 @@ Transformation TwelveToneRow::updateTransformationQueue()
 	return transformation;
 }
 
-std::vector<int> TwelveToneRow::retrograde(size_t first, int length, int degree) const
+vector<int> TwelveToneRow::retrograde(size_t first, int length, int degree) const
 {
 	auto rowSegment = getRowSegment(first, length);
 	retrogradeHelper(rowSegment);
@@ -78,7 +73,7 @@ std::vector<int> TwelveToneRow::retrograde(size_t first, int length, int degree)
 	return rowSegment;
 }
 
-std::vector<int> TwelveToneRow::inversion(size_t first, int length, int degree) const
+vector<int> TwelveToneRow::inversion(size_t first, int length, int degree) const
 {
 	auto rowSegment = getRowSegment(first, length);
 	inversionHelper(rowSegment);
@@ -87,7 +82,7 @@ std::vector<int> TwelveToneRow::inversion(size_t first, int length, int degree) 
 	return rowSegment;
 }
 
-std::vector<int> TwelveToneRow::retrogradeInversion(size_t first, int length, int degree) const
+vector<int> TwelveToneRow::retrogradeInversion(size_t first, int length, int degree) const
 {
 	auto rowSegment = getRowSegment(first, length);
 	inversionHelper(rowSegment);
@@ -97,7 +92,7 @@ std::vector<int> TwelveToneRow::retrogradeInversion(size_t first, int length, in
 	return rowSegment;
 }
 
-std::vector<int> TwelveToneRow::randomFragment(size_t first, int length) 
+vector<int> TwelveToneRow::randomFragment(size_t first, int length) 
 {
 	const Transformation transformation = updateTransformationQueue();
 

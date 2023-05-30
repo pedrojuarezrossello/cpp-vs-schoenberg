@@ -1,5 +1,5 @@
-#ifndef SCOREXML_H
-#define SCOREXML_H
+#ifndef SCORE_H
+#define SCORE_H
 #include "mx/api/ScoreData.h"
 #include "include/score_utils.h"
 #include "melody.h"
@@ -14,15 +14,17 @@ using mx::api::PartData;
 template<int Numerator, int Denominator>
 class ScoreXML
 {
+    using melody_contour = vector<pair<int, int>>;
+
 public:
 	ScoreXML( string&& title, string&& instrument, int number_of_bars);
 	ScoreXML(const string& title, const string& instrument, int number_of_bars);
-    ScoreData getScore() { return score; }
+	ScoreData getScore() { return score; }
 	void convertToXML();
 private:
 	ScoreData score;
 	TimeSignature<Numerator,Denominator> time_signature;
-	vector<pair<int, int>>  melody_array;
+	melody_contour  melody_array;
 };
 
 template<int Numerator, int Denominator>
@@ -136,4 +138,4 @@ void ScoreXML<Numerator, Denominator>::convertToXML()
 }
 
 
-#endif // !SCOREXML_H
+#endif // !SCORE_H

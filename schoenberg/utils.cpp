@@ -4,6 +4,7 @@
 #include <random>
 #include <unordered_map>
 #include <unordered_set>
+#include <mx/api/DocumentManager.h>
 
 using std::default_random_engine;
 using std::chrono::system_clock;
@@ -12,6 +13,7 @@ using std::uniform_int_distribution;
 using std::vector;
 using std::unordered_map;
 using std::unordered_set;
+using mx::api::DocumentManager;
 
 default_random_engine getRandomEngine()
 {
@@ -24,9 +26,10 @@ int randomLength()
 {
 	auto generator = getRandomEngine();
 	bernoulli_distribution distribution(0.65);
-	
+
+	//prioritise mid lengths of row segments
 	if (distribution(generator)) [[likely]] {
-		uniform_int_distribution<int> middleDistribution(4, 8);
+		uniform_int_distribution<int> middleDistribution(4, 8); 
 		return middleDistribution(generator);
 	} else
 	{
@@ -37,6 +40,8 @@ int randomLength()
 }
 
 vector<vector<int>> calculatePartition(int num) {
+	//calculate partitions of a number (4 = 1 + 1 + 2 and so on) excluding "unmusical" partitions
+
 	unordered_map<int, vector<vector<int>>> partitionMemoisation({  { 1,{{1}} }});
 	
 	const unordered_set<int> prohibited_partitions = { 5,9,10,11,13,15};
@@ -70,10 +75,12 @@ vector<vector<int>> calculatePartition(int num) {
 
 vector<int> randomPartition(int num)
 {
+	//select a random partition of a number
 	auto generator = getRandomEngine();
 	vector<vector<int>> partitions = calculatePartition(num);
 	uniform_int_distribution<int> randomPartitionDistribution(0, partitions.size()-1);
-	return partitions[randomPartitionDistribution(generator)]; //return a copy????
+	vector<int> partition = partitions[randomPartitionDistribution(generator)];
+	return partition; //(n)rvo
 }
 
 void rescale(vector<int>& vec, int scalar)
@@ -84,9 +91,22 @@ void rescale(vector<int>& vec, int scalar)
 	}
 }
 
-int correctPitch(const int pitch)
+void writeMusicXMLFile(const ScoreData& score, string&& file_path, bool write_to_console)
 {
-	return (pitch % 12 >= 0) ? (pitch % 12) : ((pitch % 12) + 12);
-}
+	auto& mgr = DocumentManager::getInstance();
+	const auto documentID = mgr.createFromScore(score);
 
+	// write to the console
+	if (write_to_console) 
+	{
+		mgr.writeToStream(documentID, std::cout);
+		std::cout << std::endl;
+	}
+
+	// write to a file
+	mgr.writeToFile(documentID, file_path);
+
+	// we need to explicitly delete the object held by the manager
+	mgr.destroyDocument(documentID);
+}
 

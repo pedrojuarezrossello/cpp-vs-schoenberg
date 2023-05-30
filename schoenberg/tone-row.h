@@ -22,7 +22,6 @@ class TwelveToneRow
 
 public:
 	TwelveToneRow();
-	Row getRow() const;
 	melodyFragment randomFragment(size_t first, int length);
 
 private:

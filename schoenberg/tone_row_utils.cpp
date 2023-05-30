@@ -3,7 +3,9 @@
 #include <algorithm>
 #include <stdexcept>
 
-void transpositionHelper(std::vector<int>& rowSegment, int degree)
+using std::vector;
+
+void transpositionHelper(vector<int>& rowSegment, int degree)
 {
 	if (degree > 5 || degree < -6) [[unlikely]]
 	{
@@ -15,7 +17,7 @@ void transpositionHelper(std::vector<int>& rowSegment, int degree)
 	}
 }
 
-void inversionHelper(std::vector<int>& rowSegment)
+void inversionHelper(vector<int>& rowSegment)
 {
 	for (int& element : rowSegment)
 	{

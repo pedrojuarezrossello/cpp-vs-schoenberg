@@ -11,16 +11,15 @@ using mx::api::PartData;
 using mx::api::ClefSymbol;
 using  mx::api::Accidental;
 using mx::api::Beam;
-using mx::api::CurveType;
 
-NoteData createNote(const int pitch, const int duration, int tick_count, const BeamPosition beam_position, bool no_altered)
+
+void createNote(NoteData& note, const int pitch, const int duration, int tick_count, const BeamPosition beam_position, bool no_altered)
 {
-	auto note = NoteData{}; //check if we can remake this with void
 	const auto noteInfo = chromaticScale.find(pitch)->second;
 
-	note.pitchData.step = get<0>(noteInfo);
-	note.pitchData.octave = get<1>(noteInfo);
-	note.pitchData.alter = get<2>(noteInfo);
+	note.pitchData.step = get<0>(noteInfo); //pitch
+	note.pitchData.octave = get<1>(noteInfo); //octave
+	note.pitchData.alter = get<2>(noteInfo); //accidental
 
 	if (get<2>(noteInfo) == -1)
 	{
@@ -36,12 +35,12 @@ NoteData createNote(const int pitch, const int duration, int tick_count, const B
 		note.pitchData.accidental = Accidental::natural; 
 	}
 
-	if (no_altered)
+	if (no_altered) //if it doesn't require alteration 
 	{
 		note.pitchData.accidental = Accidental::none;
 	}
 
-	const auto [durationName, durationDots] = rhythmLookUpTable.find(duration)->second; 
+	const auto [durationName, durationDots] = rhythmLookUpTable.find(duration)->second; //obtain duration
 	note.durationData.durationName = durationName;
 	note.durationData.durationDots = durationDots;
 	note.tickTimePosition = tick_count;
@@ -65,13 +64,14 @@ NoteData createNote(const int pitch, const int duration, int tick_count, const B
 		break;
 	}
 
-	return note;
 }
 
 void addNoteToMeasure(MeasureData* measure, const int pitch, const int duration, int tick_count, const BeamPosition beam_position, bool no_altered)
 {
 	const auto staff = &measure->staves.front();
-	staff->voices[0].notes.emplace_back(createNote(pitch, duration, tick_count, beam_position, no_altered)); //try this later
+	staff->voices[0].notes.emplace_back(); //add new note
+	auto& note = staff->voices[0].notes.back(); 
+	createNote(note, pitch, duration, tick_count, beam_position, no_altered); //update the note (as of now empty)
 }
 
 MeasureData* addMeasure(PartData& part)
@@ -89,7 +89,7 @@ MeasureData* addFirstMeasure(PartData& part, int numerator, int denominator)
 
 	auto measure = &part.measures.back();
 
-	measure->timeSignature.beats = numerator;
+	measure->timeSignature.beats = numerator; //measure info + clef etc
 	measure->timeSignature.beatType = denominator;
 	measure->timeSignature.isImplicit = false;
 

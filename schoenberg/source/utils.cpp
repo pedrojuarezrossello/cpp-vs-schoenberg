@@ -1,4 +1,4 @@
-#include "include/utils.h"
+#include "../include/utils/utils.h"
 
 #include <chrono>
 #include <random>
@@ -29,11 +29,12 @@ int randomLength()
 
 	//prioritise mid lengths of row segments
 	if (distribution(generator)) [[likely]] {
-		uniform_int_distribution<int> middleDistribution(4, 8); 
+		uniform_int_distribution<int> middleDistribution(4, 8);
 		return middleDistribution(generator);
-	} else
+	}
+	else
 	{
-		const vector<int> extremes{2, 3, 9, 10, 11, 12};
+		const vector<int> extremes{ 2, 3, 9, 10, 11, 12 };
 		uniform_int_distribution<int> extremeDistribution(0, 4);
 		return extremes[extremeDistribution(generator)];
 	}
@@ -42,21 +43,21 @@ int randomLength()
 vector<vector<int>> calculatePartition(int num) {
 	//calculate partitions of a number (4 = 1 + 1 + 2 and so on) excluding "unmusical" partitions
 
-	unordered_map<int, vector<vector<int>>> partitionMemoisation({  { 1,{{1}} }});
-	
-	const unordered_set<int> prohibited_partitions = { 5,9,10,11,13,15};
+	unordered_map<int, vector<vector<int>>> partitionMemoisation({ { 1,{{1}} } });
+
+	const unordered_set<int> prohibited_partitions = { 5,9,10,11,13,15 };
 	vector<vector<int>> output;
 	if (!prohibited_partitions.contains(num))
 	{
 		output = { {num} };
 	}
 
-	if (partitionMemoisation.contains(num)) 
+	if (partitionMemoisation.contains(num))
 	{
 		return partitionMemoisation[num];
 	}
 
-	for (int i=1; i<num; i++)
+	for (int i = 1; i < num; i++)
 	{
 		int first = num - i;
 		if (!prohibited_partitions.contains(first) && !prohibited_partitions.contains(i)) {
@@ -78,7 +79,7 @@ vector<int> randomPartition(int num)
 	//select a random partition of a number
 	auto generator = getRandomEngine();
 	vector<vector<int>> partitions = calculatePartition(num);
-	uniform_int_distribution<int> randomPartitionDistribution(0, partitions.size()-1);
+	uniform_int_distribution<int> randomPartitionDistribution(0, partitions.size() - 1);
 	vector<int> partition = partitions[randomPartitionDistribution(generator)];
 	return partition; //(n)rvo
 }
@@ -97,7 +98,7 @@ void writeMusicXMLFile(const ScoreData& score, string&& file_path, bool write_to
 	const auto documentID = mgr.createFromScore(score);
 
 	// write to the console
-	if (write_to_console) 
+	if (write_to_console)
 	{
 		mgr.writeToStream(documentID, std::cout);
 		std::cout << std::endl;

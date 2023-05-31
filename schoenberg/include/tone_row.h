@@ -1,5 +1,6 @@
 #ifndef TONE_ROW_H
 #define TONE_ROW_H
+
 #include <array>
 #include <deque>
 #include <vector>
@@ -32,7 +33,7 @@ private:
 	melodyFragment inversion(size_t first, int length, int degree) const;
 	melodyFragment retrograde(size_t first, int length, int degree) const;
 	melodyFragment retrogradeInversion(size_t first, int length, int degree) const;
-	
+
 };
 
 #endif //TONE_ROW_H 

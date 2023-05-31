@@ -1,7 +1,7 @@
 #ifndef SCORE_H
 #define SCORE_H
 #include "mx/api/ScoreData.h"
-#include "include/score_utils.h"
+#include "utils/score_utils.h"
 #include "melody.h"
 
 using std::vector;
@@ -17,14 +17,14 @@ class ScoreXML
     using melody_contour = vector<pair<int, int>>;
 
 public:
-	ScoreXML( string&& title, string&& instrument, int number_of_bars);
-	ScoreXML(const string& title, const string& instrument, int number_of_bars);
-	ScoreData getScore() { return score; }
-	void convertToXML();
+    ScoreXML(string&& title, string&& instrument, int number_of_bars);
+    ScoreXML(const string& title, const string& instrument, int number_of_bars);
+    ScoreData getScore() { return score; }
+    void convertToXML();
 private:
-	ScoreData score;
-	TimeSignature<Numerator,Denominator> time_signature;
-	melody_contour  melody_array;
+    ScoreData score;
+    TimeSignature<Numerator, Denominator> time_signature;
+    melody_contour  melody_array;
 };
 
 template<int Numerator, int Denominator>
@@ -73,8 +73,8 @@ void ScoreXML<Numerator, Denominator>::convertToXML()
     //get part 
     auto& part = score.parts.back();
     //add first measure
-	auto bar = addFirstMeasure(part, time_signature.getNumerator(), time_signature.getDenominator());
-  
+    auto bar = addFirstMeasure(part, time_signature.getNumerator(), time_signature.getDenominator());
+
     //intialise trackers and alteration array
     int semiQuaverCount{ 0 };
     const int semiQuaversPerBar = (time_signature.getDenominator() == 4) ? (time_signature.getNumerator() * 4) : (time_signature.getNumerator() * 2);
@@ -82,13 +82,13 @@ void ScoreXML<Numerator, Denominator>::convertToXML()
     int semiQuaverCountPerBeat{ 0 };
     vector<bool> alterations(7, false);
 
-    for (const auto[pitch,duration] : melody_array)
+    for (const auto [pitch, duration] : melody_array)
     {
         //determine if we need to add an accidental to the note
         bool no_alteration{ false };
 
         //either it hasn't been altered yet and it is a natural OR it's been altered and the next occurence is also altered (so no need for accidental)
-        if ((!isAltered(pitch) && !alterationValueFromPitch(alterations, pitch)) || (isAltered(pitch) && alterationValueFromPitch(alterations,pitch)))
+        if ((!isAltered(pitch) && !alterationValueFromPitch(alterations, pitch)) || (isAltered(pitch) && alterationValueFromPitch(alterations, pitch)))
         {
             no_alteration = true;
         }
@@ -107,10 +107,10 @@ void ScoreXML<Numerator, Denominator>::convertToXML()
             addNoteToMeasure(bar, pitch, duration, semiQuaverCount, BeamPosition::START, no_alteration);
             semiQuaverCountPerBeat += duration;
         }
-        else if (semiQuaverCountPerBeat > 0 && duration + semiQuaverCountPerBeat < semiQuaversPerBeat) /*a beam has started, and we haven't reached 
-																											the end of the beat*/
+        else if (semiQuaverCountPerBeat > 0 && duration + semiQuaverCountPerBeat < semiQuaversPerBeat) /*a beam has started, and we haven't reached
+                                                                                                            the end of the beat*/
         {
-            addNoteToMeasure(bar, pitch, duration, semiQuaverCount, BeamPosition::MIDDLE, no_alteration); 
+            addNoteToMeasure(bar, pitch, duration, semiQuaverCount, BeamPosition::MIDDLE, no_alteration);
             semiQuaverCountPerBeat += duration;
         }
         else if (semiQuaverCountPerBeat > 0 && duration + semiQuaverCountPerBeat == semiQuaversPerBeat) //end of the beat and thus of beam
@@ -129,7 +129,7 @@ void ScoreXML<Numerator, Denominator>::convertToXML()
         {
             bar = addMeasure(part);
             semiQuaverCount = 0;
-            alterations = vector<bool>(7,false);
+            alterations = vector<bool>(7, false);
         }
     }
 

@@ -1,9 +1,10 @@
 #ifndef MELODY_H
 #define MELODY_H
-#include "tone-row.h"
+
+#include "tone_row.h"
 #include "time_signature.h"
-#include "include/utils.h"
-#include "include/melody_utils.h"
+#include "utils/utils.h"
+#include "utils//melody_utils.h"
 #include <vector>
 
 using std::pair;
@@ -11,15 +12,15 @@ using std::make_pair;
 using std::vector;
 
 template<int Numerator, int Denominator>
-class Melody 
+class Melody
 {
 	using melody_contour = vector<pair<int, int>>;
 public:
 	explicit Melody(const size_t number_of_bars) :
-								row(TwelveToneRow()),time_signature(TimeSignature<Numerator,Denominator>()), number_of_bars(number_of_bars) {}
+		row(TwelveToneRow()), time_signature(TimeSignature<Numerator, Denominator>()), number_of_bars(number_of_bars) {}
 
 	melody_contour generate();
-	TimeSignature<Numerator, Denominator> getMeasure() const { return time_signature;};
+	TimeSignature<Numerator, Denominator> getMeasure() const { return time_signature; };
 private:
 	TwelveToneRow row;
 	TimeSignature<Numerator, Denominator> time_signature;
@@ -40,7 +41,7 @@ vector<pair<int, int>> Melody<Numerator, Denominator>::generate()
 
 	vector<pair<int, int>> melody_contour;
 
-	const int number_of_notes = rhythmicSchema.size(); 
+	const int number_of_notes = rhythmicSchema.size();
 	int remaining{ number_of_notes };
 	int last_row_index{ 0 };
 	int last_rhythm_index{ 0 };

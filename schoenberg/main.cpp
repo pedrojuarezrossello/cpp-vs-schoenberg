@@ -1,7 +1,7 @@
 #include <chrono>
-#include "score.h"
+#include "include/score.h"
 #include "mx/api/ScoreData.h"
-#include "include/utils.h"
+#include "include/utils/utils.h"
 
 int main() {
 

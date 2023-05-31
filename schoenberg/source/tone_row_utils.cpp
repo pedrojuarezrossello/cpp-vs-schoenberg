@@ -1,4 +1,4 @@
-#include "include/tone_row_utils.h"
+#include "../include/utils/tone_row_utils.h"
 
 #include <algorithm>
 #include <stdexcept>
@@ -11,10 +11,10 @@ void transpositionHelper(vector<int>& rowSegment, int degree)
 	{
 		throw std::invalid_argument("Degree must be between -6 and 5!");
 	}
-	for (int& element : rowSegment)
-	{
-		element = (element + degree) % 12;
-	}
+		for (int& element : rowSegment)
+		{
+			element = (element + degree) % 12;
+		}
 }
 
 void inversionHelper(vector<int>& rowSegment)

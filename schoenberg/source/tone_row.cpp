@@ -1,6 +1,6 @@
-#include "tone-row.h"
-#include "include/tone_row_utils.h"
-#include "include/utils.h"
+#include "../include/tone_row.h"
+#include "../include/utils/tone_row_utils.h"
+#include "../include/utils/utils.h"
 #include <chrono>
 #include <random>
 
@@ -8,7 +8,7 @@ using std::vector;
 using std::array;
 
 TwelveToneRow::TwelveToneRow() : row{ {-5,-4,-3,-2,-1,0,1,2,3,4,5,6} },
-transformations{ {Transformation::INVERSION, Transformation::RETROGRADE, Transformation::RETROGRADE_INVERSION}}
+transformations{ {Transformation::INVERSION, Transformation::RETROGRADE, Transformation::RETROGRADE_INVERSION} }
 {
 	auto generator = getRandomEngine();
 
@@ -17,7 +17,7 @@ transformations{ {Transformation::INVERSION, Transformation::RETROGRADE, Transfo
 	std::ranges::shuffle(transformations.begin(), transformations.end(), generator);
 }
 
-vector<int> TwelveToneRow::getRowSegment(const size_t first, const int length) const 
+vector<int> TwelveToneRow::getRowSegment(const size_t first, const int length) const
 {
 	const auto it_to_row = row.cbegin();
 	vector<int> rowSegment; //(N)RVO
@@ -28,7 +28,7 @@ vector<int> TwelveToneRow::getRowSegment(const size_t first, const int length) c
 	}
 	//if it does, insert the overflown elements from the beginning (in a circular fashion)
 	rowSegment = std::vector<int>(it_to_row + first, it_to_row + 12);
-	rowSegment.insert(rowSegment.end(), it_to_row, it_to_row+((first+length)%12));
+	rowSegment.insert(rowSegment.end(), it_to_row, it_to_row + ((first + length) % 12));
 	return rowSegment;
 }
 
@@ -92,7 +92,7 @@ vector<int> TwelveToneRow::retrogradeInversion(size_t first, int length, int deg
 	return rowSegment;
 }
 
-vector<int> TwelveToneRow::randomFragment(size_t first, int length) 
+vector<int> TwelveToneRow::randomFragment(size_t first, int length)
 {
 	const Transformation transformation = updateTransformationQueue();
 

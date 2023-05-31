@@ -1,6 +1,6 @@
-#include "include/score_utils.h"
-#include "include/tables.h"
-#include "include/utils.h"
+#include "../include/utils/score_utils.h"
+#include "../include/utils/tables.h"
+#include "../include/utils/utils.h"
 #include <unordered_map>
 #include <unordered_set>
 
@@ -32,7 +32,7 @@ void createNote(NoteData& note, const int pitch, const int duration, int tick_co
 	}
 	else
 	{
-		note.pitchData.accidental = Accidental::natural; 
+		note.pitchData.accidental = Accidental::natural;
 	}
 
 	if (no_altered) //if it doesn't require alteration 
@@ -70,13 +70,13 @@ void addNoteToMeasure(MeasureData* measure, const int pitch, const int duration,
 {
 	const auto staff = &measure->staves.front();
 	staff->voices[0].notes.emplace_back(); //add new note
-	auto& note = staff->voices[0].notes.back(); 
+	auto& note = staff->voices[0].notes.back();
 	createNote(note, pitch, duration, tick_count, beam_position, no_altered); //update the note (as of now empty)
 }
 
 MeasureData* addMeasure(PartData& part)
 {
-	part.measures.emplace_back(); 
+	part.measures.emplace_back();
 	auto measure = &part.measures.back();
 
 	measure->staves.emplace_back();
@@ -167,7 +167,7 @@ bool alterationValueFromPitch(vector<bool>& alt, int pitch)
 
 	const int pitch_corrected = correctPitch(pitch);
 
-	if (naturals.contains(pitch_corrected)) 
+	if (naturals.contains(pitch_corrected))
 	{
 		switch (pitch_corrected)
 		{

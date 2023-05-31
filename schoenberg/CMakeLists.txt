@@ -4,7 +4,7 @@ project(Schoenberg VERSION 1.0
                   DESCRIPTION "Random twelve tone melody generator"
                   LANGUAGES CXX)
 				  
-file(GLOB_RECURSE sources lib/*.h lib/utils/*.h src/*.cpp)
+file(GLOB_RECURSE sources include/*.h include/utils/*.h sources/*.cpp)
 
 add_executable(example ${sources})
 

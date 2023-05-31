@@ -4,7 +4,8 @@ project(Schoenberg VERSION 1.0
                   DESCRIPTION "Random twelve tone melody generator"
                   LANGUAGES CPP)
 				  
-set(CPP_VERSION 20)
+file(GLOB_RECURSE sources lib/*.h lib/utils/*.h src/*.cpp)
 
-add_subdirectory(include) 
-add_subdirectory(source)
+add_executable(example ${sources})
+
+target_include_directories(example PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}

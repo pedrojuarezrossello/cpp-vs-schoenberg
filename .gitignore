@@ -4,6 +4,7 @@
 *.lo
 *.o
 *.sln
+main.cpp
 
 # Compiled Dynamic libraries
 *.so

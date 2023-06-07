@@ -92,22 +92,4 @@ void rescale(vector<int>& vec, int scalar)
 	}
 }
 
-void writeMusicXMLFile(const ScoreData& score, string&& file_path, bool write_to_console)
-{
-	auto& mgr = DocumentManager::getInstance();
-	const auto documentID = mgr.createFromScore(score);
-
-	// write to the console
-	if (write_to_console)
-	{
-		mgr.writeToStream(documentID, std::cout);
-		std::cout << std::endl;
-	}
-
-	// write to a file
-	mgr.writeToFile(documentID, file_path);
-
-	// we need to explicitly delete the object held by the manager
-	mgr.destroyDocument(documentID);
-}
 

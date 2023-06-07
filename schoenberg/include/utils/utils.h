@@ -20,5 +20,5 @@ inline int correctPitch(int pitch)
 	//pitch mod 12 (0 ... 11)
 	return (pitch % 12 >= 0) ? (pitch % 12) : ((pitch % 12) + 12);
 }
-void writeMusicXMLFile(const ScoreData& score, string&& file_path, bool write_to_console);
+
 #endif //UTILS_H

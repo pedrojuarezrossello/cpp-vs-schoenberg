@@ -1,5 +1,6 @@
 #ifndef SCORE_H
 #define SCORE_H
+#include "mx/api/DocumentManager.h"
 #include "mx/api/ScoreData.h"
 #include "utils/score_utils.h"
 #include "melody.h"
@@ -9,6 +10,7 @@ using std::string;
 using std::pair;
 using mx::api::ScoreData;
 using mx::api::PartData;
+using mx::api::DocumentManager;
 
 
 template<int Numerator, int Denominator>
@@ -21,6 +23,8 @@ public:
     ScoreXML(const string& title, const string& instrument, int number_of_bars);
     ScoreData getScore() { return score; }
     void convertToXML();
+    friend void writeMusicXMLFile(ScoreXML& score_xml, string& file_path, bool write_to_path);
+    friend void writeMusicXMLFile(ScoreXML& score_xml, string&& file_path, bool write_to_path);
 private:
     ScoreData score;
     TimeSignature<Numerator, Denominator> time_signature;
@@ -137,5 +141,50 @@ void ScoreXML<Numerator, Denominator>::convertToXML()
 
 }
 
+template<int Numerator, int Denominator>
+void writeMusicXMLFile(ScoreXML<Numerator,Denominator>& score_xml, const string& file_path, bool write_to_console)
+{
+    auto& mgr = DocumentManager::getInstance();
+
+    const auto score = score_xml.getScore();
+
+    const auto documentID = mgr.createFromScore(score);
+
+    // write to the console
+    if (write_to_console)
+    {
+        mgr.writeToStream(documentID, std::cout);
+        std::cout << std::endl;
+    }
+
+    // write to a file
+    mgr.writeToFile(documentID, file_path);
+
+    // we need to explicitly delete the object held by the manager
+    mgr.destroyDocument(documentID);
+}
+
+template<int Numerator, int Denominator>
+void writeMusicXMLFile(ScoreXML<Numerator, Denominator>& score_xml, string&& file_path, bool write_to_console)
+{
+    auto& mgr = DocumentManager::getInstance();
+
+    const auto score = score_xml.getScore();
+
+    const auto documentID = mgr.createFromScore(score);
+
+    // write to the console
+    if (write_to_console)
+    {
+        mgr.writeToStream(documentID, std::cout);
+        std::cout << std::endl;
+    }
+
+    // write to a file
+    mgr.writeToFile(documentID, file_path);
+
+    // we need to explicitly delete the object held by the manager
+    mgr.destroyDocument(documentID);
+}
 
 #endif // !SCORE_H

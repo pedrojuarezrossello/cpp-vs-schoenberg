@@ -14,10 +14,9 @@ To construct the XML, we use a library mainly developed by Matt James Briggs (ht
 
 To install the programme into your preferred environment, you should simply do 
 ```
-git clone https://github.com/pedrojuarezrossello/cpp-vs-schoenberg.git cpp-vs-schoenberg
-mkdir build
-cd build
-cmake ..
+git clone https://github.com/pedrojuarezrossello/cpp-vs-schoenberg.git 
+cd cpp-vs-schoenberg/schoenberg
+cmake .
 ```
 
 Then running the following code will generate a music XML file in your directory which you can visualise in webistes like https://www.soundslice.com/musicxml-viewer/:
